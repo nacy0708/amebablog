@@ -10,8 +10,13 @@ module Amebablog
       @blog_title = xml.css('feed > title').text
       @username   = xml.css('feed > author > name').text
       @blog_url   = xml.css('feed > link[rel="alternate"]').first[:href]
-      @next_url   = xml.css('feed > link[rel="next"]').first.try(:attribute, "href").try(:text)
-      @prev_url   = xml.css('feed > link[rel="prev"]').first.try(:attribute, "href").try(:text)
+      unless (url = xml.css('feed > link[rel="next"]').first).nil?
+        @next_url   = url[:href].text
+      end
+      unless (url = xml.css('feed > link[rel="prev"]').first).nil?
+        @prev_url   = url[:href].text
+      end
+      
       # entry
       @entries = []
       xml.css('feed > entry').each do |entry|
